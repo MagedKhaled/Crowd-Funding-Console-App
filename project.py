@@ -1,9 +1,8 @@
-
+import os
 class Project:
     projectFolder = 'projects/'
     projectTitles = 'projects/__Titles__'
     def __init__(self,userID):
-        self.projectTitles = self.getProjectTitles()
         self.userID=userID
         self.getTitle()
         self.getDetails()
@@ -42,22 +41,65 @@ class Project:
         self.endTime = self.__class__.getInp('End Time')
 
     def saveProject(self):
-        with open(f"{self.__class__.projectFolder}/{self.title}",'a') as file:
-            file.write(str(self.__dict__))
+        with open(f"{self.__class__.projectFolder}/{self.title}",'w') as file:
+            file.write(str(self.__dict__)+"\n")
         
         with open(self.__class__.projectTitles,'a') as file:
-            file.write(f"{self.userID}:{self.title}")
+            myDict = {'user':self.userID,'project':self.title}
+            file.writelines(str(myDict)+"\n")
 
     @classmethod
     def getProjectTitles(cls):
         with open(cls.projectTitles,'r') as file:
             projects = file.readlines()
-            print(projects)
+        return projects
 
     @classmethod
     def viewAll(cls):
-        cls.getProjectTitles()
-        pass
+        projects = cls.getProjectTitles()
+
+
+        projectsTitles = []
+        for project in projects:
+            project = eval(project)
+            projectsTitles.append(project['project'])
+        
+        cls.printOut('All Projects: ',projectsTitles)
+
+
+
+    @classmethod
+    def printOut(cls,massage,dataList):
+        print(massage)
+
+        
+        for i in range(len(dataList)):
+            print(f"{i+1})",end='')
+            print(dataList[i])
+
+    @classmethod
+    def getProject(cls,projectTitle):
+        with open(f"projects/{projectTitle}",'r') as file:
+            project = file.readline()
+            project = eval(project)
+            return ImportProject(project)
+        
+    @classmethod
+    def deleteProject(cls,projectToDelete):
+        projectTitles = cls.getProjectTitles()
+        with open(cls.projectTitles,'a') as file:
+            for project in projectTitles:
+                project = eval(project)
+                if project['project'] == projectToDelete:
+                    continue
+                file.writelines(str(project)+"\n")
+        
+        os.remove(f"projects/{projectToDelete}")
+
+
+
+
+
 
 
 
@@ -66,9 +108,15 @@ class Project:
 
 
 class ImportProject(Project):
-    def __init__(self,title):
-        with open(f'projects/{title}','r') as file:
-            print(file.readline)
+    def __init__(self,data):
+        print(data)
+        self.title = data['title']
+        self.userID = data['userID']
+        self.details = data['details']
+        self.target = data['target']
+        self.startTime = data['startTime']
+        self.endTime = data['endTime']
+
 
 
 
