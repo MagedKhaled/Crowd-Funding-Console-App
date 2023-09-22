@@ -1,3 +1,7 @@
 {'firstName': 'maged', 'lastName': 'khaled', 'name': 'maged khaled', 'email': 'magedkh', 'passwd': 'magedpass', 'mobile': '01020343532'}
 {'firstName': 'shrouk', 'lastName': 'ahmed', 'name': 'shrouk ahmed', 'email': 'shrouk@gmail.com', 'passwd': 'shroukpass', 'mobile': '01023542356'}
 {'firstName': 'khaled', 'lastName': 'ahmed', 'name': 'khaled ahmed', 'email': 'khaled@gmail.com', 'passwd': 'khaledpass', 'mobile': '01512345678'}
+{'firstName': 'maged', 'lastName': 'khaled', 'name': 'maged khaled', 'email': 'maged@gmail.com', 'passwd': 'magedPass', 'mobile': '01023234354'}
+{'firstName': 'ahmed', 'lastName': 'mohamed', 'name': 'ahmed mohamed', 'email': 'ah@gm.com', 'passwd': 'ahmed', 'mobile': '01012345678'}
+{'firstName': 'sdfa', 'lastName': 'asdkfl', 'name': 'sdfa asdkfl', 'email': 'dasf@kfads.dsa', 'passwd': '123:123', 'mobile': '01203452563'}
+{'firstName': 'maged', 'lastName': 'khaled', 'name': 'maged khaled', 'email': 'maged.khaled03@gmail.co', 'passwd': '66cee396e3da1d764461ca3fc86f5e7e470acdfdff53509385740700a69975ac', 'mobile': '01032748712'}

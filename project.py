@@ -1,4 +1,6 @@
 import os
+from validation import IsValid
+from datetime import datetime
 class Project:
     projectFolder = 'projects/'
     projectTitles = 'projects/__Titles__'
@@ -13,6 +15,7 @@ class Project:
 
     @classmethod
     def getInp(cls,inpName,required=False):
+        os.system('clear')
         if required:
             inp = input(f"Enter Your Project's {inpName}: ")
             while True: 
@@ -27,18 +30,61 @@ class Project:
 
     def getTitle(self):
         self.title = self.__class__.getInp('Title',True)
+        valid = IsValid.isValid('title',self.title,unique=True,exception='title')
+        if valid :
+            if valid == 'exist':
+                input('The project title is exist ')
+                self.getTitle()
+            else:
+                return 
+        else:
+            
+            input('Invalid input, press enter to continue ')
+            self.getTitle()
+
+
 
     def getDetails(self):
+    
         self.details = self.__class__.getInp('Details')
+        if len(self.details) > 1000:
+            input("you can't write more than 1000 character, press enter to continue  ")
+            self.getDetails()
+        else:
+            return
         
     def getTarget(self):
-        self.target = self.__class__.getInp('Target')
+
+        self.target = self.__class__.getInp('Target in EGP')
+        if IsValid.isValid('number',self.target):
+            return
+        else:
+            input('Target must be number, press enter to continue ')
+            self.getTarget()
 
     def getStart(self):
         self.startTime = self.__class__.getInp('Start Time')
+        if IsValid.isValid('date',self.startTime):
+            return
+        else:
+            input('Start date must be like 23-1-2023, press enter to continue  ')
+            self.getStart()
     
     def getEnd(self):
         self.endTime = self.__class__.getInp('End Time')
+        if IsValid.isValid('date',self.endTime):
+            startTime = datetime.strptime(self.startTime, "%d-%m-%Y")
+            endTime = datetime.strptime(self.endTime, "%d-%m-%Y")
+            if startTime > endTime:
+                print("End Time can't be lower than start time")
+                inp = input("press enter to retry or 'q' to enter start time again: ")
+                if inp.lower() == 'q':
+                    self.getStart()
+                self.getEnd()
+            return
+        else:
+            input('End date must be like 23-1-2023, press enter to continue  ')
+            self.getEnd()
 
     def saveProject(self):
         with open(f"{self.__class__.projectFolder}/{self.title}",'w') as file:
@@ -64,18 +110,11 @@ class Project:
             project = eval(project)
             projectsTitles.append(project['project'])
         
-        cls.printOut('All Projects: ',projectsTitles)
-
-
-
-    @classmethod
-    def printOut(cls,massage,dataList):
-        print(massage)
-
-        
-        for i in range(len(dataList)):
+        print('All Projects: ')
+        for i in range(len(projectsTitles)):
             print(f"{i+1})",end='')
-            print(dataList[i])
+            print(projectsTitles[i])   
+        return projectsTitles    
 
     @classmethod
     def getProject(cls,projectTitle):
@@ -87,7 +126,7 @@ class Project:
     @classmethod
     def deleteProject(cls,projectToDelete):
         projectTitles = cls.getProjectTitles()
-        with open(cls.projectTitles,'a') as file:
+        with open(cls.projectTitles,'w') as file:
             for project in projectTitles:
                 project = eval(project)
                 if project['project'] == projectToDelete:
@@ -109,7 +148,6 @@ class Project:
 
 class ImportProject(Project):
     def __init__(self,data):
-        print(data)
         self.title = data['title']
         self.userID = data['userID']
         self.details = data['details']

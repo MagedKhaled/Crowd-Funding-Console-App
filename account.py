@@ -1,5 +1,9 @@
-from project import Project, ImportProject
+from project import Project
 from validation import IsValid
+import os
+from getpass import getpass
+import hashlib
+
 
 
 # Class to create account including sign in, sign up, 
@@ -18,14 +22,18 @@ class Account:
 
     @classmethod
     def getInp(cls,inpName,required=False):
+        os.system('clear')
         if required:
-            inp = input(f"Enter Your {inpName}: ")
-            while True: 
-                
-                if inp :
-                    return inp
-                print(f"The {inpName} is required!")
+            if (inpName == 'Password') or (inpName == 'RePassword'):
+                inp = getpass(f"Enter Your {inpName}: ")
+            else:
                 inp = input(f"Enter Your {inpName}: ")
+                
+            if inp :
+                return inp
+            else:
+                input(f"The {inpName} is required, press enter to continue ")
+                cls.getInp(inpName,required=required)
                     
         
         else:
@@ -38,7 +46,7 @@ class Account:
         if IsValid.isValid('name',self.firstName):
             return
         else:
-            print('The name must be alphabetic only!')
+            input('The name must be alphabetic only, press enter to continue ')
             self.getFirstName()
 
     def getLastName(self):
@@ -46,22 +54,27 @@ class Account:
         if IsValid.isValid('name',self.lastName):
             return
         else:
-            print('The name must be alphabetic only!')
+            input('The name must be alphabetic only, press enter to continue ')
             self.getLastName()
 
 
     def getEmail(self):
         self.email = self.__class__.getInp('Email',True)
-        if IsValid.isValid('email',self.email):
-            return
-        else:
-            print('The Email is invalid!')
+        state = IsValid.isValid('email',self.email,unique=True,exception='email')
+        if state:
+            if state == 'exist':
+                input('The Email is exist, press enter to continue ')
+                self.getEmail()
+            else:
+                return
+        else:            
+            input('The Email is invalid, press enter to continue ')
             self.getEmail()
 
     def getPass(self):
         self.passwd = self.__class__.getInp('Password',True)
         if len(self.passwd)<4:
-            print("Your Password must be at least 4 characters or numbers")
+            input("Your Password must be at least 4 characters or numbers, press enter to continue ")
             self.getPass()
 
         rePasswd = self.__class__.getInp('RePassword',True)
@@ -72,7 +85,9 @@ class Account:
                 break
             rePasswd = self.__class__.getInp('RePassword',True)
         else:
+            self.passwd = hashlib.sha256(self.passwd.encode()).hexdigest()
             return
+        
         self.getPass()
 
     def getMobile(self):
@@ -80,7 +95,7 @@ class Account:
         if IsValid.isValid('mobile',self.mobile):
             return
         else:
-            print("Invalid Mobile Number!")
+            input("Invalid Mobile Number, press enter to continue ")
             self.getMobile()
         
 
@@ -94,9 +109,8 @@ class Account:
 
     @classmethod
     def login(cls,Debug=False):
-        print(Debug)
         if Debug:
-            userData = cls.getUserData("magedkh")
+            userData = cls.getUserData("maged.khaled03@gmail.co")
             return User(userData)
         
         myEmail = cls.getInp("Email",True)
@@ -104,9 +118,11 @@ class Account:
         if userData:
             while True : 
                 userPass = cls.getInp("Password",True)
+                userPass = hashlib.sha256(userPass.encode()).hexdigest()
                 if userPass == userData['passwd']:
-                    print(userData)
-                    return User(userData)
+
+                    user =  User(userData)
+                    return user
                 else:
                     print("Wrong Password!")
                     inp = input("Press Enter to try again or 'Q' to try with another email: ")
@@ -114,7 +130,7 @@ class Account:
                         break
                     
         else:
-            print('This Email is not exist')
+            input('This Email is not exist, press enter to continue ')
         cls.login()
 
 
@@ -136,6 +152,7 @@ class User(Account):
     def __init__(self,data):
         self.firstName = data['firstName']
         self.lastName = data['lastName']
+        self.name = self.firstName+' '+self.lastName
         self.email = data['email']
         self.passwd = data['passwd']
         self.mobile = data['mobile']
