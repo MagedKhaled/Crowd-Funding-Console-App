@@ -1,7 +1,7 @@
 import os
 from validation import IsValid
 from datetime import datetime
-class Project:
+class Project:#class works as project creator which makes a new project ones you call it
     projectFolder = 'projects/'
     projectTitles = 'projects/__Titles__'
     def __init__(self,userID):
@@ -14,7 +14,7 @@ class Project:
         self.saveProject()
 
     @classmethod
-    def getInp(cls,inpName,required=False):
+    def getInp(cls,inpName,required=False):#helpful function to get data from user
         os.system('clear')
         if required:
             inp = input(f"Enter Your Project's {inpName}: ")
@@ -27,6 +27,7 @@ class Project:
         else:
             return input(f"Enter Your Project's {inpName}: ")
 
+#********************************Functions for gathering data from user***************************************
 
     def getTitle(self):
         self.title = self.__class__.getInp('Title',True)
@@ -86,22 +87,22 @@ class Project:
             input('End date must be like 23-1-2023, press enter to continue  ')
             self.getEnd()
 
-    def saveProject(self):
-        with open(f"{self.__class__.projectFolder}/{self.title}",'w') as file:
+    def saveProject(self):#save project in file
+        with open(f"{self.__class__.projectFolder}/{self.title}",'w') as file:#save all project data in file named with project's title
             file.write(str(self.__dict__)+"\n")
         
-        with open(self.__class__.projectTitles,'a') as file:
+        with open(self.__class__.projectTitles,'a') as file:#save userID and project title
             myDict = {'user':self.userID,'project':self.title}
             file.writelines(str(myDict)+"\n")
 
     @classmethod
-    def getProjectTitles(cls):
+    def getProjectTitles(cls):#returns all project created in formate of [{'userid':'maged','project':'magedProject'}]
         with open(cls.projectTitles,'r') as file:
             projects = file.readlines()
         return projects
 
     @classmethod
-    def viewAll(cls):
+    def viewAll(cls):#prints all projects titles
         projects = cls.getProjectTitles()
 
 
@@ -117,23 +118,23 @@ class Project:
         return projectsTitles    
 
     @classmethod
-    def getProject(cls,projectTitle):
+    def getProject(cls,projectTitle):#receive project title and return project object
         with open(f"projects/{projectTitle}",'r') as file:
             project = file.readline()
             project = eval(project)
-            return ImportProject(project)
+            return ImportProject(project)#child class that makes project object when takes project data in dictionary
         
     @classmethod
-    def deleteProject(cls,projectToDelete):
+    def deleteProject(cls,projectToDelete):#deletes project
         projectTitles = cls.getProjectTitles()
-        with open(cls.projectTitles,'w') as file:
+        with open(cls.projectTitles,'w') as file:#remove project from title file
             for project in projectTitles:
                 project = eval(project)
                 if project['project'] == projectToDelete:
                     continue
                 file.writelines(str(project)+"\n")
         
-        os.remove(f"projects/{projectToDelete}")
+        os.remove(f"projects/{projectToDelete}")#remove the file of project
 
 
 
@@ -146,7 +147,7 @@ class Project:
 
 
 
-class ImportProject(Project):
+class ImportProject(Project):#class to make project object using stored data
     def __init__(self,data):
         self.title = data['title']
         self.userID = data['userID']

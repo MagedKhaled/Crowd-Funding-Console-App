@@ -21,7 +21,7 @@ class Account:
         self.save() #write in my file
 
     @classmethod
-    def getInp(cls,inpName,required=False):
+    def getInp(cls,inpName,required=False):#helpful function which bring data from user
         os.system('clear')
         if required:
             if (inpName == 'Password') or (inpName == 'RePassword'):
@@ -31,7 +31,7 @@ class Account:
                 
             if inp :
                 return inp
-            else:
+            else:#Not Null
                 input(f"The {inpName} is required, press enter to continue ")
                 cls.getInp(inpName,required=required)
                     
@@ -40,7 +40,7 @@ class Account:
             return input(f"Enter Your {inpName}: ")
 
 
-
+#********************************Functions for gathering data from user***************************************
     def getFirstName(self):
         self.firstName = self.__class__.getInp('First Name',True)
         if IsValid.isValid('name',self.firstName):
@@ -85,7 +85,7 @@ class Account:
                 break
             rePasswd = self.__class__.getInp('RePassword',True)
         else:
-            self.passwd = hashlib.sha256(self.passwd.encode()).hexdigest()
+            self.passwd = hashlib.sha256(self.passwd.encode()).hexdigest()#make it hashed
             return
         
         self.getPass()
@@ -100,7 +100,7 @@ class Account:
         
 
 
-    def save(self):
+    def save(self):#save user data in file
         with open(f'{__class__.loginFile}','a') as file:
             file.write(str(self.__dict__)+'\n')
 
@@ -108,7 +108,7 @@ class Account:
 
 
     @classmethod
-    def login(cls,Debug=False):
+    def login(cls,Debug=False):#make a login 
         if Debug:
             userData = cls.getUserData("maged.khaled03@gmail.co")
             return User(userData)
@@ -121,7 +121,7 @@ class Account:
                 userPass = hashlib.sha256(userPass.encode()).hexdigest()
                 if userPass == userData['passwd']:
 
-                    user =  User(userData)
+                    user =  User(userData) #if email and password correct >>> make a user using child class named User
                     return user
                 else:
                     print("Wrong Password!")
@@ -135,7 +135,7 @@ class Account:
 
 
     @classmethod
-    def getUserData(cls,myEmail):
+    def getUserData(cls,myEmail):#helpful function that returns user data by receiving its email 
         with open(cls.loginFile,'r') as file:
             users = file.readlines()
             for user in users:
@@ -148,7 +148,7 @@ class Account:
 
 
 
-class User(Account):
+class User(Account):#Class that takes all user data as dictionary to make user object
     def __init__(self,data):
         self.firstName = data['firstName']
         self.lastName = data['lastName']
@@ -160,12 +160,12 @@ class User(Account):
 
 
 
-    def createProject(self):
+    def createProject(self):#create new project related to current user
         Project(self.email)
         self.getMyProjects()
 
 
-    def getMyProjects(self):
+    def getMyProjects(self):#returns all projects related to this user
         self.projects = []
         projects = Project.getProjectTitles()
         
